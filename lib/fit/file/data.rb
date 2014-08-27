@@ -20,13 +20,15 @@ module Fit
           RUBY
 
           definition.fields.each do |field|
-            class_eval <<-RUBY, __FILE__, __LINE__ + 1
-              #{field.type} :#{field.raw_name}
+            if !self.instance_methods(false).include?(field.name.to_sym)
+              class_eval <<-RUBY, __FILE__, __LINE__ + 1
+                #{field.type} :#{field.raw_name}
 
-              def #{field.name}
-                #{field.raw_name}.snapshot #{ "/ #{field.scale.inspect}.0" if field.scale }
-              end
-            RUBY
+                def #{field.name}
+                  #{field.raw_name}.snapshot #{ "/ #{field.scale.inspect}.0" if field.scale }
+                end
+              RUBY
+            end
           end
         end
       end
